@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String      @id @default(uuid())
+  username    String      @unique
+  password    String
+  name        String
+  bio         String?
+  objectives  Objective[]
+  chatFolders ChatFolder[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Objective {
+  id          String     @id @default(uuid())
+  name        String
+  status      String     @default("pending")
+  description String     @default("Sem descrição fornecida.")
+  deadline    DateTime   @default(now())
+  userId      String     @unique
+  user        User       @relation(fields: [userId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model ChatFolder {
+  id         String     @id @default(uuid())
+  name       String     @default("Sem nome")
+  date       DateTime   @default(now())
+  userId     String     @unique
+  user       User       @relation(fields: [userId], references: [id])
+  chats      Chat[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Chat {
+  id         String     @id @default(uuid())
+  content    String     @default("Sem conteúdo")
+  timestamp  DateTime   @default(now())
+  folderId   String     @unique
+  folder     ChatFolder @relation(fields: [folderId], references: [id])
+}

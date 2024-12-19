@@ -2,12 +2,19 @@
   "name": "back-end-amos",
   "version": "1.0.0",
   "main": "dist/server.js",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc",
+    "wbuild": "tsc --watch",
+    "start": "node dist/server.js",
+    "wstart": "nodemon dist/server.js",
+    "dev": "tsc && node dist/server.js"
+  },
   "keywords": [],
   "author": "Vitor de Oliveira",
   "license": "ISC",
   "description": "API da AMÓS!",
   "devDependencies": {
+    "nodemon": "^3.1.9",
     "typescript": "^5.7.2"
   },
   "dependencies": {
