@@ -23,8 +23,37 @@ export class UsersController {
         }
     };
 
+    async getUserByUserName(req : Request, res : Response, next : NextFunction) {
+        try {
+            const { username } = req.params;
+            const user = await prisma.user.findUnique({where: {username}});
+            if(!user) throw new AppError('Usuário não encontrado!', 404);
+            res.json(user);
+        } catch(error) {
+            next(error);
+        }
+    }
+
+    async loginUser(req : Request, res : Response, next : NextFunction) {
+        try {
+            const { username, password } = req.body;
+            const user = await prisma.user.findUnique({where: {username}});
+            if(!user) throw new AppError('Usuário não encontrado!', 404);
+
+            const validPassword = await bcrypt.compare(password, user.password);
+            if(!validPassword) throw new AppError('Senha inválida!', 401);
+
+            res.json({message: 'Usuário logado com sucesso!'});
+        } catch(error) {
+            next(error);
+        }
+    };
+
     async createUser(req : Request, res : Response, next : NextFunction) {
         try {
+
+            // CRIAR TOKEN PRA AUTENTICAR
+
             const userParsed = userSchema.parse(req.body);
             const hashedPassword = await bcrypt.hash(userParsed.password, 10);
 
@@ -45,4 +74,35 @@ export class UsersController {
             next(error);
         }
     };
+
+    async updateUser(req : Request, res : Response, next : NextFunction) {
+        try {
+            const { username } = req.params;
+            const userParsed = userSchema.parse(req.body);
+            const hashedPassword = await bcrypt.hash(userParsed.password, 10);
+
+            const user = await prisma.user.update({
+                where: {username},
+                data: {
+                    username: userParsed.username,
+                    password: hashedPassword,
+                    name: userParsed.name
+                }
+            });
+
+            res.json(user);
+        } catch(error) {
+            next(error);
+        }
+    };
+
+    async deleteUser(req : Request, res : Response, next : NextFunction) {
+        try {
+            const { username } = req.params;
+            const user = await prisma.user.delete({where: {username}});
+            res.json(user);
+        } catch(error) {
+            next(error);
+        }
+    }
 }
