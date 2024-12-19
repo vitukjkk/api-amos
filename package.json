@@ -14,13 +14,18 @@
   "license": "ISC",
   "description": "API da AMÓS!",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.7",
     "nodemon": "^3.1.9",
     "typescript": "^5.7.2"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
     "@types/express": "^5.0.0",
+    "bcrypt": "^5.1.1",
     "express": "^4.21.2",
-    "prisma": "^6.1.0"
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.1.0",
+    "zod": "^3.24.1"
   }
 }
