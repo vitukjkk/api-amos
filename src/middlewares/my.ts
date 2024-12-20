@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 import { AppError } from "../utils/app-error";
 import { ZodError } from "zod";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export function errorHandler(err: Error, req: Request, res: Response, _next : NextFunction) {
     if (err instanceof AppError) {
@@ -14,11 +14,16 @@ export function errorHandler(err: Error, req: Request, res: Response, _next : Ne
     }
 }
 
-export function authenticateToken(req : Request, res : Response, next : NextFunction) {
+export function authenticateToken(req : Request, res : Response, next : NextFunction) : void {
     const token = req.headers['authorization']?.split(' ')[1];
-    if(!token) return res.status(401).json({ message: 'Token não fornecido!' });
+   
+    if(!token) {
+        res.status(401).json({ message: 'Token não fornecido!' });
+        return;
+    } 
+        
     
-    jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
         if(err) return res.status(403).json({ message: 'Token inválido!' });
         console.log('token válido!');
         next();

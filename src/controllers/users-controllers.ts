@@ -4,13 +4,15 @@ import { AppError } from "../utils/app-error";
 
 import z from "zod";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { authenticateToken } from "../middlewares/my";
 
 const prisma = new PrismaClient();
 
 const userSchema = z.object({
     username: z.string().min(3).max(30),
     password: z.string().min(6),
-    name: z.string().min(3).max(30)
+    name: z.string().min(3).max(30),
 });
 
 export class UsersController {
@@ -43,7 +45,14 @@ export class UsersController {
             const validPassword = await bcrypt.compare(password, user.password);
             if(!validPassword) throw new AppError('Senha inválida!', 401);
 
-            res.json({message: 'Usuário logado com sucesso!'});
+            
+            const token = jwt.sign(
+                { id: user.id, username: user.username, name: user.name, role: user.role },
+                process.env.JWT_SECRET as string,
+                { expiresIn: '1h' }
+            );
+            
+            res.json({token});
         } catch(error) {
             next(error);
         }

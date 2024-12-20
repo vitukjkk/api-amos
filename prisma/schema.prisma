@@ -12,11 +12,17 @@ model User {
   username    String      @unique
   password    String
   name        String
-  bio         String?
+  bio         String?     @default("Sem bio.")
+  role        UserRoles   @default(USER)
   objectives  Objective[]
   chatFolders ChatFolder[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+}
+
+enum UserRoles {
+  USER
+  ADMIN
 }
 
 model Objective {
