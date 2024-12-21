@@ -5,7 +5,6 @@ import { AppError } from "../utils/app-error";
 import z from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { authenticateToken } from "../middlewares/my";
 
 const prisma = new PrismaClient();
 
