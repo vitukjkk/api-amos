@@ -31,8 +31,8 @@ model Objective {
   status      String     @default("pending")
   description String     @default("Sem descrição fornecida.")
   deadline    DateTime   @default(now())
-  userId      String     @unique
-  user        User       @relation(fields: [userId], references: [id])
+  userName    String     @unique
+  user        User       @relation(fields: [userName], references: [username])
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
