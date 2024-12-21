@@ -24,8 +24,16 @@ export function authenticateToken(req : Request, res : Response, next : NextFunc
         
     
     jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
-        if(err) return res.status(403).json({ message: 'Token inválido!' });
-        console.log('token válido!');
-        next();
+        if (err) {
+            return res.status(403).json({ message: 'Token inválido!' });
+        }
+        console.log('Token válido!', decoded);
+
+        const userInfo = decoded as Express.UserInfo;
+
+        req.userInfo = userInfo;
+
+        next(); 
     });
+    
 }

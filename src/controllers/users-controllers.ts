@@ -17,6 +17,8 @@ const userSchema = z.object({
 export class UsersController {
     async getUsers(req : Request, res : Response, next : NextFunction) {
         try {
+            const role = req.userInfo?.role;
+            if(role !== 'ADMIN') throw new AppError('Acesso negado!', 403);
             const users = await prisma.user.findMany();
             res.json(users);
         } catch(error) {
@@ -26,6 +28,8 @@ export class UsersController {
 
     async getUserByUserName(req : Request, res : Response, next : NextFunction) {
         try {
+            const role = req.userInfo?.role;
+            if(role !== 'ADMIN') throw new AppError('Acesso negado!', 403);
             const { username } = req.params;
             const user = await prisma.user.findUnique({where: {username}});
             if(!user) throw new AppError('Usuário não encontrado!', 404);
@@ -43,7 +47,6 @@ export class UsersController {
 
             const validPassword = await bcrypt.compare(password, user.password);
             if(!validPassword) throw new AppError('Senha inválida!', 401);
-
             
             const token = jwt.sign(
                 { id: user.id, username: user.username, name: user.name, role: user.role },
@@ -59,8 +62,8 @@ export class UsersController {
 
     async createUser(req : Request, res : Response, next : NextFunction) {
         try {
-
-            // CRIAR TOKEN PRA AUTENTICAR
+            const role = req.userInfo?.role;
+            if(role !== 'ADMIN') throw new AppError('Acesso negado!', 403);
 
             const userParsed = userSchema.parse(req.body);
             const hashedPassword = await bcrypt.hash(userParsed.password, 10);
@@ -85,6 +88,9 @@ export class UsersController {
 
     async updateUser(req : Request, res : Response, next : NextFunction) {
         try {
+            const role = req.userInfo?.role;
+            if(role !== 'ADMIN') throw new AppError('Acesso negado!', 403);
+
             const { username } = req.params;
             const userParsed = userSchema.parse(req.body);
             const hashedPassword = await bcrypt.hash(userParsed.password, 10);
@@ -106,6 +112,9 @@ export class UsersController {
 
     async deleteUser(req : Request, res : Response, next : NextFunction) {
         try {
+            const role = req.userInfo?.role;
+            if(role !== 'ADMIN') throw new AppError('Acesso negado!', 403);
+            
             const { username } = req.params;
             const user = await prisma.user.delete({where: {username}});
             res.json(user);
