@@ -53,6 +53,6 @@ model Chat {
   id         String     @id @default(uuid())
   content    String     @default("Sem conteúdo")
   timestamp  DateTime   @default(now())
-  folderId   String     @unique
+  folderId   String     
   folder     ChatFolder @relation(fields: [folderId], references: [id])
 }
