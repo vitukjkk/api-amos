@@ -40,8 +40,9 @@ model Objective {
 model ChatFolder {
   id         String     @id @default(uuid())
   name       String     @default("Sem nome")
+  description String    @default("Sem descrição")
   date       DateTime   @default(now())
-  userId     String     @unique
+  userId     String    
   user       User       @relation(fields: [userId], references: [id])
   chats      Chat[]
   createdAt  DateTime   @default(now())
