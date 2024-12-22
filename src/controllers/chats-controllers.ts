@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
-import z from "zod";
+import z, { string } from "zod";
 
 const prisma = new PrismaClient();
 
