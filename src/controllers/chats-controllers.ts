@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
-import z, { string } from "zod";
+import z from "zod";
+import { OpenAI } from 'openai';
 
 const prisma = new PrismaClient();
+
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 
 const chatSchema = z.object({
     content: z.string().min(6).max(255),
@@ -10,6 +15,7 @@ const chatSchema = z.object({
 });
 
 export class ChatsController {
+
     async getChats(req: Request, res: Response, next: NextFunction) {
         try {
             const chats = await prisma.chat.findMany();
@@ -31,6 +37,17 @@ export class ChatsController {
 
     async createChat(req : Request, res : Response, next : NextFunction) {
         try {
+
+            const response = await openai.chat.completions.create({
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    {role: 'user', content: 'oi gptinho! tudo bem?'}
+                ]
+            }); 
+
+            console.log(response.choices[0].message.content);
+            res.json(response);
+
             const chatParsed = chatSchema.parse(req.body);
             const chat = await prisma.chat.create({
                 data: {

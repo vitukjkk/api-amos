@@ -47,7 +47,7 @@ export class FoldersController {
                     name: folderParsed.name,
                     description: folderParsed.description
                 }
-            });
+            });''
             res.json(folders);
         } catch(error) {
             next(error);
